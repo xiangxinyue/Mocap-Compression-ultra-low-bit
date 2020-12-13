@@ -1,0 +1,14 @@
+TY  - JOUR
+AU  - Khan, Murtaza Ali
+PY  - 2016
+DA  - 2016//
+TI  - Multiresolution coding of motion capture data for real-time multimedia applications
+JO  - Multimedia Tools and Applications
+SP  - 1
+EP  - 16
+AB  - In this work, we present a novel and efficient method for coding of motion capture (MoCap) data obtained from recording of human actions. MoCap data is represented as hierarchies of joints and parameterized by translation and rotation of channels or degree-of-freedom (DOF) in a sequence of frames as a function of time. The proposed method approximates the MoCap data of each channel independently using multiresolution discrete wavelet transform (DWT). In order to improve the performance, a skeleton dependent quantization of wavelet coefficients is used that computes a local threshold of each joint based on a global threshold and depth of the joint in the hierarchy of joints. The multiresolution DWT based coding allows to control the bitrate and to decode (reconstruct) the single instance of compressed MoCap data into multiple instances from high to low resolution (quality). We also compared the performance of proposed method with recent and state of the art methods. The proposed method yields smaller storage space and faster encoding time. The method is well suitable for real-time multimedia applications due to its low time and space requirements.
+SN  - 1573-7721
+UR  - http://dx.doi.org/10.1007/s11042-016-3944-7
+DO  - 10.1007/s11042-016-3944-7
+ID  - Khan2016
+ER  - 

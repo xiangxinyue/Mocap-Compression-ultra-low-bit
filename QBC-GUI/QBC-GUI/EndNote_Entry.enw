@@ -1,0 +1,15 @@
+%0 Journal Article
+%T An efficient algorithm for compression of motion capture signal using multidimensional quadratic Bézier curve break-and-fit method
+%A Khan, Murtaza Ali
+%J Multidimensional Systems and Signal Processing
+%D 2016
+%V 27
+%N 1
+%@ 1573-0824
+%F Khan2016
+%X The emergence of applications to capture, process, store, and transmit motion capture (MoCap) signal has raise the interest in research community to investigate and devise better techniques for parameterization and compression of MoCap signal. In this work, we present a novel and efficient method for parametric representation and compression of motion signal for skeletal animation. The method exploits the temporal coherence of motion signal using quadratic Bézier curve (QBC) fitting. The method treats the rotational and translation variations of a joint in a sequence of frames as input points in N-dimensional Euclidean space. The input points are parameterized and approximated using QBC least square fitting. Break and fit criterion is used to minimize the number of curve segments required to fit the data. Precise control of fitting accuracy is achieved by user specified tolerance of error limit. We compared the performance of the proposed method with principal component analysis and wavelet transform based methods of MoCap signal compression. The method leads to smaller storage and better visual quality compared to other methods. The low degree of QBC ensures computationally efficient fitting algorithm, especially for the real-time applications.
+%9 journal article
+%R 10.1007/s11045-014-0293-4
+%U http://dx.doi.org/10.1007/s11045-014-0293-4
+%P 121-143
+
