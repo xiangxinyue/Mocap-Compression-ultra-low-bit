@@ -128,21 +128,22 @@ if __name__ == "__main__":
     lfoot = joint_order[27]
     ltoes = joint_order[28]
 
-    clip_size = 120
-    clip = walk_amc.get_trajectory_all_dof_cut_by_k(joint_order[25], clip_size)
-    #clip = walk_amc.get_trajectory_all_dof(joint_order[0])
-    print(clip.shape)
-    pca = PCA(n_components=1)
-    for i in range(clip.shape[0]):
-        c = clip[i]
-        pca.fit(c)
-        #print(c.shape)
-        print(pca.explained_variance_ratio_)
-        #print(pca.explained_variance_)
-        #print(pca.n_components_)
-        #print(pca.components_)
-        new_x = pca.fit_transform(c)
-        x = pca.inverse_transform(new_x)
-        #print(new_x)
-        error = np.mean((x - c)**2)
-        #print(error)
+    clip_size = 360
+    i = 0 
+    for i in range(29):
+        clip = walk_amc.get_trajectory_all_dof_cut_by_k(joint_order[i], clip_size)
+        print(clip.shape)
+        pca = PCA(n_components=1)
+        for i in range(clip.shape[0]):
+            c = clip[i]
+            pca.fit(c)
+            #print(c.shape)
+            print(pca.explained_variance_ratio_)
+            #print(pca.explained_variance_)
+            #print(pca.n_components_)
+            #print(pca.components_)
+            new_x = pca.fit_transform(c)
+            x = pca.inverse_transform(new_x)
+            #print(new_x)
+            error = np.mean((x - c)**2)
+            print(error)
