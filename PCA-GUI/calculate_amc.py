@@ -2,7 +2,7 @@ import numpy as np
 from sklearn.decomposition import PCA
 
 
-class Animation():
+class Animation():                                 
     def __init__(self, file_path):
         self.amc_file = open(file_path, mode='r')
         self.framewise_database = []
@@ -97,7 +97,37 @@ class Frame():
 if __name__ == "__main__":
     walk_amc = Animation("02_01.amc")
     joint_order = walk_amc.get_joint_order()
+
     root = joint_order[0]
+    lowerback = joint_order[1]
+    upperback = joint_order[2]
+    thorax = joint_order[3]
+    lowerneck = joint_order[4]
+    upperneck = joint_order[5]
+    head = joint_order[6]
+    rclavicle = joint_order[7]
+    rhumerus = joint_order[8]
+    rradius = joint_order[9]
+    rwrist = joint_order[10]
+    rhand = joint_order[11]
+    rfingers = joint_order[12]
+    rthumb = joint_order[13]
+    lclavicle = joint_order[14]
+    lhumerus = joint_order[15]
+    lradius = joint_order[16]
+    lwrist = joint_order[17]
+    lhand = joint_order[18]
+    lfingers = joint_order[19]
+    lthumb = joint_order[20]
+    rfemur = joint_order[21]
+    rtibia = joint_order[22]
+    rfoot = joint_order[23]
+    rtoes = joint_order[24]
+    lfemur = joint_order[25]
+    ltibia = joint_order[26]
+    lfoot = joint_order[27]
+    ltoes = joint_order[28]
+
     clip_size = 32
     clip = walk_amc.get_trajectory_all_dof_cut_by_k(root, clip_size)
     print(clip.shape)
@@ -113,6 +143,5 @@ if __name__ == "__main__":
         new_x = pca.fit_transform(c)
         x = pca.inverse_transform(new_x)
         print(new_x)
-        # print(x)
         error = np.mean((x - c)**2)
         print(error)
