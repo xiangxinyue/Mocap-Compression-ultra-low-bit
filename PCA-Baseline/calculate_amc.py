@@ -1,7 +1,8 @@
 import numpy as np
 from sklearn.decomposition import PCA
+# Ref: https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html
 
-
+# the class of animation deal with the movements
 class Animation():                                 
     def __init__(self, file_path):
         self.amc_file = open(file_path, mode='r')
@@ -89,7 +90,7 @@ if __name__ == "__main__":
     walk_amc = Animation("modify.amc")
     joint_order = walk_amc.get_joint_order()
 
-    # list all the joint by the index
+    # list all the 29 joints by the index
     root = joint_order[0]
     lowerback = joint_order[1]
     upperback = joint_order[2]
@@ -155,7 +156,7 @@ if __name__ == "__main__":
             new_x = pca.fit_transform(c)
             x = pca.inverse_transform(new_x)
             print(new_x)
-            
+
             # mean_array, shape (n_features,)
             # Per-feature empirical mean, estimated from the training set.
             # Equal to X.mean(axis=0).
