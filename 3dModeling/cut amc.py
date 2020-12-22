@@ -1,4 +1,6 @@
 
+
+# this file is used to create sample walk and run amc to further generate 3d matched amc file from trajectories
 class read_amc():
     def __init__(self,file_name):
         self.amc_file = open(file_name, 'r')
@@ -15,6 +17,8 @@ class read_amc():
                 except:
                     self.complete_frame.append(line)
                 else:
+                    # parameter that has to be changed based on run or walk amc
+                    # for walk, use 140; for run use 91
                     if int(line) == 91:
                         return
                     else:

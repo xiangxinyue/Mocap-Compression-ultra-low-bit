@@ -16,6 +16,9 @@ import math
 #         print()
 # f.close()
 
+
+
+
 # By using above code to get stride length range in Mocap representation is ( -40.3324 , -14.6831 ), ( -30.6689 , 16.2002 ) for running
 # So the length in Mocap representation is  ** 25.6493 **
 # multiply by scalar ** 0.056444 **         from http://mocap.cs.cmu.edu/faqs.php
