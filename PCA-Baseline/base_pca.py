@@ -1,9 +1,9 @@
 import numpy as np
 from sklearn.decomposition import PCA
+import bezier
 import matplotlib.pyplot as plt
 
 # Ref: https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html
-
 
 # the class of animation deal with the movements
 class Animation():                                 
@@ -88,44 +88,86 @@ class Frame():
             self.frame_dict[joint_name] = joint_dof
 
 
+def curve_fitting(clip):
+    threashold = 2
+    index_set = [0.,0,1111,0.2222,0.3333,0.4444,0.5555,0.6666,0.7777,0.8888,0.9999]
+    valid = False
+
+    frame = np.array([0, 0.3333, 0.6666, 0.9999])
+
+    cp1, cp2, cp3, cp4 = clip[0], clip[3], clip[6], clip[9]
+    control_points = [cp1,cp2,cp3,cp4]
+
+
+    while not valid:
+        # print(frame.shape,len(control_points))
+        # print(control_points)
+        nodes = np.asfortranarray([frame,control_points])
+        curve = bezier.Curve.from_nodes(nodes)
+
+        for i in range(10):
+            sample = clip[i]
+            pred = curve.evaluate(float(index_set[i]))
+
+            if threashold < abs(sample-pred[1]):
+                frame = np.append(frame,index_set[i])
+                control_points.append(clip[i])
+                continue
+        valid = True
+
+    return frame,control_points
+
+def to_str(lst):
+    lit = ''
+    for item in lst:
+        lit += str(item)
+        lit+=' '
+    return lit
+
+
+
+
+
 if __name__ == "__main__":
     walk_amc = Animation("modify.amc")
     joint_order = walk_amc.get_joint_order()
 
     # list all the 29 joints by the index
-    root = joint_order[0]
-    lowerback = joint_order[1]
-    upperback = joint_order[2]
-    thorax = joint_order[3]
-    lowerneck = joint_order[4]
-    upperneck = joint_order[5]
-    head = joint_order[6]
-    rclavicle = joint_order[7]
-    rhumerus = joint_order[8]
-    rradius = joint_order[9]
-    rwrist = joint_order[10]
-    rhand = joint_order[11]
-    rfingers = joint_order[12]
-    rthumb = joint_order[13]
-    lclavicle = joint_order[14]
-    lhumerus = joint_order[15]
-    lradius = joint_order[16]
-    lwrist = joint_order[17]
-    lhand = joint_order[18]
-    lfingers = joint_order[19]
-    lthumb = joint_order[20]
-    rfemur = joint_order[21]
-    rtibia = joint_order[22]
-    rfoot = joint_order[23]
-    rtoes = joint_order[24]
-    lfemur = joint_order[25]
-    ltibia = joint_order[26]
-    lfoot = joint_order[27]
-    ltoes = joint_order[28]
+    # root = joint_order[0]
+    # lowerback = joint_order[1]
+    # upperback = joint_order[2]
+    # thorax = joint_order[3]
+    # lowerneck = joint_order[4]
+    # upperneck = joint_order[5]
+    # head = joint_order[6]
+    # rclavicle = joint_order[7]
+    # rhumerus = joint_order[8]
+    # rradius = joint_order[9]
+    # rwrist = joint_order[10]
+    # rhand = joint_order[11]
+    # rfingers = joint_order[12]
+    # rthumb = joint_order[13]
+    # lclavicle = joint_order[14]
+    # lhumerus = joint_order[15]
+    # lradius = joint_order[16]
+    # lwrist = joint_order[17]
+    # lhand = joint_order[18]
+    # lfingers = joint_order[19]
+    # lthumb = joint_order[20]
+    # rfemur = joint_order[21]
+    # rtibia = joint_order[22]
+    # rfoot = joint_order[23]
+    # rtoes = joint_order[24]
+    # lfemur = joint_order[25]
+    # ltibia = joint_order[26]
+    # lfoot = joint_order[27]
+    # ltoes = joint_order[28]
 
     clip_size = 360
     i = 0
-    checker = True
+    b_file = open('bezier.txt','w')
+    p_file = open('pca.txt','w')
+
     for i in range(29): # for each joint
         clip = walk_amc.get_trajectory_all_dof_cut_by_k(joint_order[i], clip_size)
         #print(clip.shape)
@@ -136,41 +178,51 @@ if __name__ == "__main__":
         for j in range(clip.shape[0]):  # no sense loop
             c = clip[j]
             pca.fit(c)
+            #print(c.shape)
 
-            print(c.shape)
-
-            # explained_variance_ratio_array, shape (n_components,)
+            #explained_variance_ratio_array, shape (n_components,)
             # Percentage of variance explained by each of the selected components.
             # If n_components is not set then all components are stored and the sum of the ratios is equal to 1.0.
 
-            print(pca.explained_variance_ratio_)
+            #print(pca.explained_variance_ratio_)
 
             # explained_variance_array, shape (n_components,) 
             # The amount of variance explained by each of the selected components.
             # Equal to n_components largest eigenvalues of the covariance matrix of X.
 
-            print(pca.explained_variance_)
+            #print(pca.explained_variance_)
 
             # n_componentsint, float, None or str
             # Number of components to keep
 
-            print(pca.n_components_)
+            #print(pca.n_components_)
 
-            # components_array, shape (n_components, n_features)
+            #components_array, shape (n_components, n_features)
             # Principal axes in feature space, representing the directions of maximum variance in the data. 
             # The components are sorted by explained_variance_.\
 
-            print(pca.components_)
+            #print(pca.components_)
             new_x = pca.fit_transform(c)
-            print(new_x.shape)
-            print(len(new_x))
+            # print(new_x.shape)
+            # print(len(new_x))
+            p_file.write(np.array2string(new_x))
+            for channel in range(len(new_x[0])):
+                # sets contains 36 subset, each contains 10 frames
+                sets = np.split(new_x[:,channel],36)
+
+                for clip in sets:   # each clip has 10 frames
+                    frame, cp = curve_fitting(clip)
+                    b_file.write(to_str(cp))
 
             x = pca.inverse_transform(new_x)
-            print(new_x)
+            #print(new_x)
 
             # mean_array, shape (n_features,)
             # Per-feature empirical mean, estimated from the training set.
             # Equal to X.mean(axis=0).
 
-            error = np.mean((x - c)**2)
-            print(error)
+            #error = np.mean((x - c)**2)
+            #print(error)
+
+    b_file.close()
+    p_file.close()
