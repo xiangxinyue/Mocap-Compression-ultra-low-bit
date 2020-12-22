@@ -1,7 +1,7 @@
 import numpy as np
 from sklearn.decomposition import PCA
 import bezier
-import matplotlib.pyplot as plt
+
 
 # Ref: https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html
 
@@ -129,7 +129,7 @@ def to_str(lst):
 
 
 if __name__ == "__main__":
-    walk_amc = Animation("modify.amc")
+    walk_amc = Animation("matched_walk.amc")
     joint_order = walk_amc.get_joint_order()
 
     # list all the 29 joints by the index
@@ -178,9 +178,8 @@ if __name__ == "__main__":
         for j in range(clip.shape[0]):  # no sense loop
             c = clip[j]
             pca.fit(c)
-            #print(c.shape)
 
-            #explained_variance_ratio_array, shape (n_components,)
+            # explained_variance_ratio_array, shape (n_components,)
             # Percentage of variance explained by each of the selected components.
             # If n_components is not set then all components are stored and the sum of the ratios is equal to 1.0.
 
@@ -189,22 +188,19 @@ if __name__ == "__main__":
             # explained_variance_array, shape (n_components,) 
             # The amount of variance explained by each of the selected components.
             # Equal to n_components largest eigenvalues of the covariance matrix of X.
-
             #print(pca.explained_variance_)
 
             # n_componentsint, float, None or str
             # Number of components to keep
 
-            #print(pca.n_components_)
 
-            #components_array, shape (n_components, n_features)
+
+            # components_array, shape (n_components, n_features)
             # Principal axes in feature space, representing the directions of maximum variance in the data. 
             # The components are sorted by explained_variance_.\
-
             #print(pca.components_)
+
             new_x = pca.fit_transform(c)
-            # print(new_x.shape)
-            # print(len(new_x))
             p_file.write(np.array2string(new_x))
             for channel in range(len(new_x[0])):
                 # sets contains 36 subset, each contains 10 frames
@@ -215,14 +211,13 @@ if __name__ == "__main__":
                     b_file.write(to_str(cp))
 
             x = pca.inverse_transform(new_x)
-            #print(new_x)
 
             # mean_array, shape (n_features,)
             # Per-feature empirical mean, estimated from the training set.
             # Equal to X.mean(axis=0).
-
             #error = np.mean((x - c)**2)
             #print(error)
 
     b_file.close()
     p_file.close()
+    
