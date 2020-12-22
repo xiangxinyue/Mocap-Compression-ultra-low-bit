@@ -88,6 +88,42 @@ class Frame():
             self.frame_dict[joint_name] = joint_dof
 
 
+def curve_fitting(clip):
+    threashold = 2
+    index_set = [0.,0,1111,0.2222,0.3333,0.4444,0.5555,0.6666,0.7777,0.8888,0.9999]
+    valid = False
+
+    frame = np.array([0, 0.3333, 0.6666, 0.9999])
+
+    cp1, cp2, cp3, cp4 = clip[0], clip[3], clip[6], clip[9]
+    control_points = [cp1,cp2,cp3,cp4]
+
+
+    while not valid:
+        # print(frame.shape,len(control_points))
+        # print(control_points)
+        nodes = np.asfortranarray([frame,control_points])
+        curve = bezier.Curve.from_nodes(nodes)
+
+        for i in range(10):
+            sample = clip[i]
+            pred = curve.evaluate(float(index_set[i]))
+
+            if threashold < abs(sample-pred[1]):
+                frame = np.append(frame,index_set[i])
+                control_points.append(clip[i])
+                continue
+        valid = True
+
+    return frame,control_points
+
+def to_str(lst):
+    lit = ''
+    for item in lst:
+        lit += str(item)
+        lit+=' '
+    return lit
+
 
 
 
@@ -129,7 +165,9 @@ if __name__ == "__main__":
 
     clip_size = 360
     i = 0
-    checker = True
+    b_file = open('bezier.txt','w')
+    p_file = open('pca.txt','w')
+
     for i in range(29): # for each joint
         clip = walk_amc.get_trajectory_all_dof_cut_by_k(joint_order[i], clip_size)
         #print(clip.shape)
@@ -167,17 +205,14 @@ if __name__ == "__main__":
             new_x = pca.fit_transform(c)
             # print(new_x.shape)
             # print(len(new_x))
+            p_file.write(np.array2string(new_x))
+            for channel in range(len(new_x[0])):
+                # sets contains 36 subset, each contains 10 frames
+                sets = np.split(new_x[:,channel],36)
 
-            if i==9:
-                temp = []
-                for ind in range(360):
-                    temp.append(ind)
-                temp = np.array(temp)
-                nodes = np.asfortranarray((temp,new_x[:,0]))
-                curve = bezier.Curve(nodes,degree=359)
-                curve.plot(360)
-
-                plt.show()
+                for clip in sets:   # each clip has 10 frames
+                    frame, cp = curve_fitting(clip)
+                    b_file.write(to_str(cp))
 
             x = pca.inverse_transform(new_x)
             #print(new_x)
@@ -188,3 +223,6 @@ if __name__ == "__main__":
 
             #error = np.mean((x - c)**2)
             #print(error)
+
+    b_file.close()
+    p_file.close()
