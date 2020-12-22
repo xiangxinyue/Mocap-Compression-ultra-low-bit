@@ -1,6 +1,7 @@
 import numpy as np
 from sklearn.decomposition import PCA
 import bezier
+import matplotlib.pyplot as plt
 
 # Ref: https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html
 
@@ -128,7 +129,7 @@ def to_str(lst):
 
 
 if __name__ == "__main__":
-    walk_amc = Animation("matched_walk.amc")
+    walk_amc = Animation("modify.amc")
     joint_order = walk_amc.get_joint_order()
 
     # list all the 29 joints by the index
@@ -174,12 +175,12 @@ if __name__ == "__main__":
         # class sklearn.decomposition.PCA(n_components=None, *, copy=True, whiten=False, svd_solver='auto', tol=0.0, iterated_power='auto', random_state=None)[source]¶
         pca = PCA(n_components=0.95)
 
-        for j in range(clip.shape[0]):
+        for j in range(clip.shape[0]):  # no sense loop
             c = clip[j]
             pca.fit(c)
             #print(c.shape)
 
-            # explained_variance_ratio_array, shape (n_components,)
+            #explained_variance_ratio_array, shape (n_components,)
             # Percentage of variance explained by each of the selected components.
             # If n_components is not set then all components are stored and the sum of the ratios is equal to 1.0.
 
@@ -196,7 +197,7 @@ if __name__ == "__main__":
 
             #print(pca.n_components_)
 
-            # components_array, shape (n_components, n_features)
+            #components_array, shape (n_components, n_features)
             # Principal axes in feature space, representing the directions of maximum variance in the data. 
             # The components are sorted by explained_variance_.\
 
