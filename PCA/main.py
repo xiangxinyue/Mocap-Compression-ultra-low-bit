@@ -3,10 +3,23 @@ from sklearn.decomposition import PCA
 import bezier
 
 # Ref: https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html
-# Ref: https://pypi.org/project/bezier/
 
-# the class of animation deal with the movements
-class Animation():                                 
+# Class Animation
+# description:    This class creates an instance for given amc file, that able to cut amc into frames, group frames into several clips
+# Parameters:
+#     file_path:  path of amc file to be used
+# Attribute:
+#     self.amc_file   instance of opened amc file
+#     self.framewise_database   Numpy array object, stores Frame type object that contains information in each frame
+# Methods:
+#     self.read_frame():  use given amc file to create framewise_dtabase attribute
+#     self.get_trajectory_all_dof(joint_name):    given joint name, returns all dof trajectory for that joint through all frames
+#     self.get_trajectory_specific_dof(joint_name, dof):  partial self.get_trajectory_all_dof(), that only returns specific dof values
+#     self.get_trajectory_all_dof_cut_by_k(joint_name, k):    split return values from self.get_trajectory_all_dof() into k clips
+#     self.get_trajectory_specific_dof_cut_by_k(joint_name, dof, k):  partial self.get_trajectory_all_dof_cut_by_k(), that only returns specific dof values with k clips
+#     self.get_joint_dof_number(joint_name):  given joint name, returns the index order of the joint in any frame
+#     self.get_joint_order(): returns a list that preserves the order of each joint being stored in amc file
+class Animation():
     def __init__(self, file_path):
         self.amc_file = open(file_path, mode='r')
         self.framewise_database = []
@@ -68,8 +81,15 @@ class Animation():
         one_frame = self.framewise_database[0, 1]
         return one_frame.joint_order
 
-# the class of frame to deal with the joint order things using dictonary and 
-# numpy array as well as the list format tranformation
+# Frame class
+# Description: This is a helper class for Animation class, split joint and its dof into attributes for Animation class use
+# Parameters:
+#     list_data   List element, that contains all joint name and corresponding DOF value in one frame
+# Attributes:
+#     self.frame_dict(dictionary)  key:joint name;  value: DOF values
+#     self.joint_order(list)   states joint name preserving its order in frame
+# Method:
+#     self.Anaysis()   This method will analyze and parse the information in the frame to above two attributes
 class Frame():
     def __init__(self, list_data):
         self.list_data = np.array(list_data)
@@ -87,6 +107,11 @@ class Frame():
             self.joint_order.append(joint_name)
             self.frame_dict[joint_name] = joint_dof
 
+
+
+# Description: This function takes a clip that contains 10 frames of trasformation matrix value for current joint, and
+#              put into bezier curve and operating curve fitting technic using at least 4 control points so that can predict
+#              other points' value
 
 def curve_fitting(clip):
     threashold = 2
@@ -117,6 +142,8 @@ def curve_fitting(clip):
 
     return frame,control_points
 
+# Description: since the target list object contains numpy values, it cannot directly convert to string object,
+#               This function is to convert such list into one single string object and return it
 def to_str(lst):
     lit = ''
     for item in lst:
@@ -126,22 +153,23 @@ def to_str(lst):
 
 
 if __name__ == "__main__":
+    # To compress run.amc, replace matched_walk.amc to matched_run.amc
     walk_amc = Animation("matched_walk.amc")
     joint_order = walk_amc.get_joint_order()
 
-    clip_size = 360
-    i = 0
-    b_file = open('bezier.txt','w')
-    p_file = open('pca.txt','w')
+    clip_size = len(walk_amc.framewise_database)
 
-    for i in range(29): # for each joint
-        clip = walk_amc.get_trajectory_all_dof_cut_by_k(joint_order[i], clip_size)
-        #print(clip.shape)
+    b_file = open('bezier.txt','w') # file used to store our designed compression result
+    p_file = open('pca.txt','w')    # file used to store only pca compression method for further comparision needs
+
+    # loop for each joint in the amc file
+    for i in range(29):
+        clip = walk_amc.get_trajectory_all_dof_cut_by_k(joint_order[i], clip_size)  # cut into clips
 
         # class sklearn.decomposition.PCA(n_components=None, *, copy=True, whiten=False, svd_solver='auto', tol=0.0, iterated_power='auto', random_state=None)[source]¶
-        pca = PCA(n_components=0.95)
+        pca = PCA(n_components=0.95)    # apply PCA to reduce dimension for each clip
 
-        for j in range(clip.shape[0]):  # no sense loop
+        for j in range(clip.shape[0]):  # no sense loop, it does nothing at all
             c = clip[j]
             pca.fit(c)
 
