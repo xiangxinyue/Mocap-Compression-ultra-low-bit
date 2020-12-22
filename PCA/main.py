@@ -2,8 +2,8 @@ import numpy as np
 from sklearn.decomposition import PCA
 import bezier
 
-
 # Ref: https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html
+# Ref: https://pypi.org/project/bezier/
 
 # the class of animation deal with the movements
 class Animation():                                 
@@ -123,9 +123,6 @@ def to_str(lst):
         lit += str(item)
         lit+=' '
     return lit
-
-
-
 
 
 if __name__ == "__main__":
