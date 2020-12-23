@@ -154,11 +154,11 @@ def to_str(lst):
 
 if __name__ == "__main__":
     # To compress run.amc, replace matched_walk.amc to matched_run.amc
-    walk_amc = Animation("matched_walk.amc")
+    walk_amc = Animation("matched_run.amc")
     joint_order = walk_amc.get_joint_order()
 
     clip_size = len(walk_amc.framewise_database)
-
+    print(clip_size)
     b_file = open('bezier.txt','w') # file used to store our designed compression result
     p_file = open('pca.txt','w')    # file used to store only pca compression method for further comparision needs
 
@@ -198,7 +198,8 @@ if __name__ == "__main__":
             p_file.write(np.array2string(new_x))
             for channel in range(len(new_x[0])):
                 # sets contains 36 subset, each contains 10 frames
-                sets = np.split(new_x[:,channel],36)
+                subset = clip_size/10
+                sets = np.split(new_x[:,channel],subset)
 
                 for clip in sets:   # each clip has 10 frames
                     frame, cp = curve_fitting(clip)
