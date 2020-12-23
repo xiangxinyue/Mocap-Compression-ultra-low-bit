@@ -161,7 +161,8 @@ if __name__ == "__main__":
     print(clip_size)
     b_file = open('bezier.txt','w') # file used to store our designed compression result
     p_file = open('pca.txt','w')    # file used to store only pca compression method for further comparision needs
-
+    mse = 0
+    count = 0
     # loop for each joint in the amc file
     for i in range(29):
         clip = walk_amc.get_trajectory_all_dof_cut_by_k(joint_order[i], clip_size)  # cut into clips
@@ -196,11 +197,11 @@ if __name__ == "__main__":
 
             new_x = pca.fit_transform(c)
             p_file.write(np.array2string(new_x))
+
             for channel in range(len(new_x[0])):
                 # sets contains 36 subset, each contains 10 frames
                 subset = clip_size/10
                 sets = np.split(new_x[:,channel],subset)
-
                 for clip in sets:   # each clip has 10 frames
                     frame, cp = curve_fitting(clip)
                     b_file.write(to_str(cp))
@@ -210,8 +211,11 @@ if __name__ == "__main__":
             # mean_array, shape (n_features,)
             # Per-feature empirical mean, estimated from the training set.
             # Equal to X.mean(axis=0).
-            #error = np.mean((x - c)**2)
+            error = np.mean((x - c)**2)
+            mse+=error
+            count+=1
             #print(error)
 
     b_file.close()
     p_file.close()
+    print(mse/count)
